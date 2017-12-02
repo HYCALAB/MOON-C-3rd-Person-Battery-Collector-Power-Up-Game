@@ -16,12 +16,22 @@ ASpawnVolume::ASpawnVolume()
 
 	//박스 컴포넌트를 루트로 설정하는 이유는 새 컴포넌트가 추가되면 이를 중심(wheretospawn)으로 삼게된다.
 	RootComponent = WhereToSpawn;
+
+	// Set the spawn delay range
+	SpawnDelayRangeLow = 1.0f;
+	SpawnDelayRangeHigh = 4.5f;
+
 }
 
 // Called when the game starts or when spawned
 void ASpawnVolume::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// 아이템 샌성과정
+	SpawnDelay = FMath::FRandRange(SpawnDelayRangeLow, SpawnDelayRangeHigh);
+	// 핸들을가져다가 SpawnTimer를 위해 spawnpickup에 바인딩하고 spawndelay가 지나면 호출하고 반복은 하지 않음
+	GetWorldTimerManager().SetTimer(SpawnTimer, this, &ASpawnVolume::SpawnPickup, SpawnDelay, false);
 }
 
 // Called every frame
@@ -58,6 +68,11 @@ void ASpawnVolume::SpawnPickup()
 			SpawnRotation.Pitch = FMath::FRand() * 360.0f;
 
 			APickup* const SpawnedPickup = world->SpawnActor<APickup>(WhatToSpawn, SpawnLocation, SpawnRotation);
+
+			// 아이템 샌성과정
+			SpawnDelay = FMath::FRandRange(SpawnDelayRangeLow, SpawnDelayRangeHigh);
+			// 핸들을가져다가 SpawnTimer를 위해 spawnpickup에 바인딩하고 spawndelay가 지나면 호출하고 반복은 하지 않음
+			GetWorldTimerManager().SetTimer(SpawnTimer, this, &ASpawnVolume::SpawnPickup, SpawnDelay, false);
 		}
 	}
 }

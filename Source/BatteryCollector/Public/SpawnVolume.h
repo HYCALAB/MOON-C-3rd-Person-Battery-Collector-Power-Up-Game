@@ -11,7 +11,7 @@ class BATTERYCOLLECTOR_API ASpawnVolume : public AActor
 {
 	GENERATED_BODY()
 	
-public:	
+public:
 	// Sets default values for this actor's properties
 	ASpawnVolume();
 
@@ -19,7 +19,7 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
+public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	FORCEINLINE class UBoxComponent* GetWhereToSpawn() const {
@@ -32,6 +32,15 @@ public:
 protected:
 	UPROPERTY(EditAnywhere, Category = "Spawning")
 	TSubclassOf<class APickup> WhatToSpawn;
+	FTimerHandle SpawnTimer;
+
+	/** Minimum spawn delay */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawning")
+	float SpawnDelayRangeLow;
+
+	/** Maximum spawn delay */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawning")
+	float SpawnDelayRangeHigh;
 
 private:
 	//box component to specify where picup should be spawned
@@ -39,5 +48,8 @@ private:
 	class UBoxComponent* WhereToSpawn;
 
 	void SpawnPickup();
+
+	/** The current spawn delay */
+	float SpawnDelay;
 
 };
