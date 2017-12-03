@@ -51,6 +51,11 @@ private:
 	/** Keepstrack of the current playing state */
 	EBatteryPlayState CurrentState;
 
+	/** Spawning Volumes 관리위한 TArray */
+	TArray<class ASpawnVolume*> SpawnVolumeActors;
+
+	/** 게임 플레이 상태에 영향을 주는 모든 함수의 호출을 담당 */
+	void HandleNewState(EBatteryPlayState NewState);
 };
 
 

@@ -28,10 +28,6 @@ void ASpawnVolume::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// 아이템 샌성과정
-	SpawnDelay = FMath::FRandRange(SpawnDelayRangeLow, SpawnDelayRangeHigh);
-	// 핸들을가져다가 SpawnTimer를 위해 spawnpickup에 바인딩하고 spawndelay가 지나면 호출하고 반복은 하지 않음
-	GetWorldTimerManager().SetTimer(SpawnTimer, this, &ASpawnVolume::SpawnPickup, SpawnDelay, false);
 }
 
 // Called every frame
@@ -48,6 +44,19 @@ FVector ASpawnVolume::GetRandomPointVolume()
 	return UKismetMathLibrary::RandomPointInBoundingBox(SpawnOrigin, SpawnExtent);
 }
 
+void ASpawnVolume::SetSpawningActive(bool bShouldSpawn) {
+	if (bShouldSpawn) {
+		// Spawn Pickup에 타이머 설정
+		// 아이템 샌성과정
+		SpawnDelay = FMath::FRandRange(SpawnDelayRangeLow, SpawnDelayRangeHigh);
+		// 핸들을가져다가 SpawnTimer를 위해 spawnpickup에 바인딩하고 spawndelay가 지나면 호출하고 반복은 하지 않음
+		GetWorldTimerManager().SetTimer(SpawnTimer, this, &ASpawnVolume::SpawnPickup, SpawnDelay, false);
+	}
+	else {
+		// 반대로 타이머 초기화 - Tick에서 spawnPickup이 호출되지 않음을 의미
+		GetWorldTimerManager().ClearTimer(SpawnTimer);
+	}
+}
 
 void ASpawnVolume::SpawnPickup()
 {
