@@ -46,7 +46,7 @@ ABatteryCollectorCharacter::ABatteryCollectorCharacter()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
-	// Create Sphere
+	// Create Collection Sphere
 	CollectionSphere = CreateDefaultSubobject<USphereComponent>(TEXT("CollectionSphere"));
 	CollectionSphere->SetupAttachment(RootComponent);
 	CollectionSphere->SetSphereRadius(200.f);
@@ -57,6 +57,9 @@ ABatteryCollectorCharacter::ABatteryCollectorCharacter()
 	// set a base power level for the character
 	InitialPower = 2000.f;
 	CharacterPower = InitialPower;
+
+	SpeedFactor = 0.75f;
+	BaseSpeed = 10.f;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -155,10 +158,8 @@ void ABatteryCollectorCharacter::CollectPickups() {
 
 	for (int iCollected = 0; iCollected < CollectedActors.Num(); ++iCollected) {
 		APickup* const TestPickup = Cast<APickup>(CollectedActors[iCollected]);
-		UE_LOG(LogClass, Log, TEXT("Hello\n"));
 
 		if (TestPickup && !TestPickup->IsPendingKill() && TestPickup->IsActive()) {
-			UE_LOG(LogClass, Log, TEXT("Yeah!!\n"));
 			TestPickup->WasCollected();
 
 			// Check to see if the pickup is also a battery
@@ -184,6 +185,14 @@ float ABatteryCollectorCharacter::GetCurrentPower() {
 	return CharacterPower;
 }
 
+// called whenever power is increased or decreased
 void ABatteryCollectorCharacter::UpdatePower(float PowerChange) {
+	// change power
 	CharacterPower = CharacterPower + PowerChange;
+
+	// Change speed based on power
+	GetCharacterMovement()->MaxWalkSpeed = BaseSpeed + SpeedFactor * CharacterPower;
+
+	// call visual Effect
+	PowerChangeEffect();
 }
