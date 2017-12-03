@@ -16,10 +16,27 @@ public:
 
 	virtual void Tick(float DeltaTime) override;
 
+	UFUNCTION(BlueprintPure, Category = "Power")
+	float GetPowerToWin() const;
+
+	virtual void BeginPlay() override;
+
 protected:
 	/** The rate at which the character loses power */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Power")
+	UPROPERTY(EditDefaultsOnly, BlueprintreadWrite, Category = "Power", Meta = (BlueprintProtected = "true"))
 	float DecayRate;
+
+	/** The power need to win */
+	UPROPERTY(EditDefaultsOnly, BlueprintreadWrite, Category = "Power", Meta = (BlueprintProtected = "true"))
+	float PowerToWin;
+
+	/** The Widget class to use for our HUD screen */
+	UPROPERTY(EditDefaultsOnly, BlueprintreadWrite, Category = "Power", Meta = (BlueprintProtected = "true"))
+	TSubclassOf<class UUserWidget> HUDWidgetClass;
+
+	/** The instance of the HUD */
+	UPROPERTY()
+	class UUserWidget* CurrentWidget;
 };
 
 
